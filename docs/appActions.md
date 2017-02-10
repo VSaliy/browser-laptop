@@ -709,6 +709,42 @@ Dispatches a message when a web contents is added
 
 
 
+### dragStarted(dragType, dragData) 
+
+Notifies the app that a drag operation started from within the app
+
+**Parameters**
+
+**dragType**: `string`, The type of data
+
+**dragData**: `object`, Data being transfered
+
+
+
+### dragEnded(dragType, dragData) 
+
+Notifies the app that a drag operation stopped from within the app
+
+**Parameters**
+
+**dragType**: `string`, The type of data
+
+**dragData**: `object`, Data being transfered
+
+
+
+### dataDropped() 
+
+Notifies the app that a drop operation occurred
+
+
+
+### draggedOver() 
+
+Notifies the app that a drop operation occurred
+
+
+
 
 * * *
 

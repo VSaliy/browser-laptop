@@ -26,7 +26,7 @@ const {isFrameError} = require('../../app/common/lib/httpUtil')
 const locale = require('../l10n')
 const appConfig = require('../constants/appConfig')
 const {getSiteSettingsForHostPattern} = require('../state/siteSettings')
-const {currentWindowWebContents, isFocused} = require('../../app/renderer/currentWindow')
+const {currentWindowId, currentWindowWebContents, isFocused} = require('../../app/renderer/currentWindow')
 const windowStore = require('../stores/windowStore')
 const appStoreRenderer = require('../stores/appStoreRenderer')
 const siteSettings = require('../state/siteSettings')
@@ -561,10 +561,27 @@ class Frame extends ImmutableComponent {
         this.onFindAgain(false)
         break
       case 'detach':
-        console.log('------deatch1')
+        console.log('------deatch1', this.props.activeShortcutDetails && this.props.activeShortcutDetails.toJS())
         this.webview.detachGuest()
         console.log('------deatch2')
-        appActions.newWindow(frameStateUtil.frameOptsFromFrame(this.frame).toJS())
+        const frameOpts = frameStateUtil.frameOptsFromFrame(this.frame).toJS()
+
+        if (this.props.activeShortcutDetails) {
+          const dropWindowId = this.props.activeShortcutDetails.get('dropWindowId') || this.props.activeShortcutDetails.getIn(['dragOverData', 'draggingOverWindowId'])
+          console.log('detaching from this window:', currentWindowId)
+          console.log('drop on window id:', dropWindowId)
+          if (currentWindowId !== dropWindowId) {
+            console.log('adding new webcontents with dropWindow:', dropWindowId, 'frameOpts:', frameOpts)
+            appActions.newWebContentsAdded(dropWindowId, frameOpts)
+          } else {
+            console.log('new window with frameOpts: ', frameOpts)
+            appActions.newWindow(frameOpts)
+          }
+        } else {
+          console.log('new window2 with frameOpts: ', frameOpts)
+          appActions.newWindow(frameOpts)
+        }
+
         this.props.onCloseFrame(this.frame)
         break
     }
